@@ -1,0 +1,87 @@
+import pygame as juia
+import random
+# Imagens a serem carregadas
+
+Fundo = juia.image.load("imagemPrincipal/fundo.png")
+imagemPrincipal = juia.image.load("imagemPrincipal/carroPrincipal.png")
+imagemCarro1 = juia.image.load("imagemPrincipal/carroCinza.png")
+imagemCarro2 = juia.image.load("imagemPrincipal/carroLaranja.png")
+
+# Inicializa os recursos do pygame
+
+juia.init()
+
+# Definindos os paramentros da janela
+
+tela = juia.display.set_mode((800,600))
+
+# Defeinindo parâmetros de janela
+
+xtela = 800
+ytela = 600
+tela = juia.display.set_mode((xtela,ytela))
+
+# Definir titulo da janela
+
+juia.display.set_caption("PEGA PEGA NEGÃO")
+
+def gerarFundoDaTela():
+    tela.blit(juia.transform.scale(Fundo,(800,600)),(0,0))
+    
+
+emExecucao = True
+posicaoCarro = 0
+rotacaoCarro = 0
+velocidade = 10
+xInimigo = random.randint(120,xtela - 250)
+yInimigo = 0
+tipoDeCarro = 0
+
+def gerarInimigos(xInimigo:int,yInimigo:int,tipoDeCarro:int):
+    if tipoDeCarro == 0:
+        imagemInimigo = juia.transform.scale_by(imagemCarro1,0.7)
+    if tipoDeCarro == 1:
+        imagemInimigo = juia.transform.scale_by(imagemCarro2,0.7)
+
+    imagemInimigo = juia.transform.scale_by(imagemInimigo,0.7)
+    tela.blit(imagemInimigo,(xInimigo,yInimigo))
+
+def movimentarCarro(x:int,y:int,rot:int):
+    imagemEmEscala = juia.transform.scale_by(imagemPrincipal,0.7)
+    if rot == 0:
+        imagemEmRotacao = juia.transform.rotate(imagemEmEscala,0)
+    if rot == 1:
+        imagemEmRotacao = juia.transform.rotate(imagemEmEscala,30)
+    if rot == 2:
+         imagemEmRotacao = juia.transform.rotate(imagemEmEscala,-30)
+
+
+    tela.blit(imagemEmRotacao,(x,y))
+
+while emExecucao:
+    for event in juia.event.get():
+        if event.type == juia.QUIT:
+            emExecucao = False
+    if event.type == juia.KEYDOWN:
+        if event.key == juia.K_LEFT:
+            print("esquerda")
+            if posicaoCarro > 30:
+                posicaoCarro = posicaoCarro - 30
+            rotacaoCarro = 1
+        if event.key == juia.K_RIGHT:
+            print("direita")
+            if posicaoCarro < xtela - 140:
+                posicaoCarro = posicaoCarro + 30
+            rotacaoCarro = 2
+    if not any(juia.key.get_pressed()):
+        rotacaoCarro = 0
+
+    gerarFundoDaTela()
+    gerarInimigos(xInimigo,yInimigo,tipoDeCarro)
+    yInimigo = yInimigo + velocidade
+    if yInimigo > ytela:
+        xInimigo = random.randint(120,xtela - 250)
+        yInimigo = 0
+        tipoDeCarro = random.randint(0,1)
+    movimentarCarro(posicaoCarro,340,rotacaoCarro)
+    juia.display.update()
